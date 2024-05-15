@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ restaurant.restaurant_name }} Menu - BiteMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style> 
+        #menuitems:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+
+    <!-- Restaurant Name -->
+    <div class="container mt-4">
+        <h2 class="display-4">{{ restaurant.restaurant_name }}</h2>
+
+        <!-- Restaurant Details -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p class="lead">{{ restaurant.description }}</p>
+                <p><strong>Location:</strong> {{ restaurant.location }}</p>
+                <!-- Add more restaurant details as needed -->
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-success">Total Rating</h3>
+                <p class="lead"><strong>Rating:</strong> {{ restaurant.total_rating }}/5</p>
+                <!-- Add more rating details as needed -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="container mb-4">
+        <h3>Menu</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for item in menu_items %}
+            <div class="col">
+                <a href="{{ url_for('menu_item',restaurant_id=restaurant.restaurant_id, item_id=item.item_id) }}" class="text-decoration-none text-dark">
+                    <div class="card h-100" style="width: 18rem;" id="menuitems"> <!-- Specify custom width here -->
+                        <img src="/static/uploads/lotuscake.jpeg" class="card-img-top img-fluid mb-3" alt="{{ item.item_name }}" style="height: 150px; object-fit: cover;">
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.item_name }}</h5>
+                            <p class="card-text">{{ item.description }}</p>
+                            <p class="card-text">Price: ${{ item.price }}</p>
+                            <p class="card-text">Available: {{ 'Yes' if item.is_available else 'No' }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- User Reviews -->
+    <div class="container mb-4">
+        <h3>Customer Reviews</h3>
+        <div class="list-group">
+            {% for review in reviews %}
+            <div class="list-group-item">
+                <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='default_profile_picture.jpg') }}" alt="Profile Picture" class="rounded-circle me-3" style="width: 50px;">
+                    <div>
+                        <h5 class="mb-1">{{ review.user.username }}</h5>
+                        <p class="mb-1">"{{ review.review_text }}"</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Submit a Review Form -->
+    <form action="{{ url_for('review', restaurant_id=restaurant.restaurant_id) }}" method="POST">
+
+        <input type="hidden" name="restaurant_id" value="{{ restaurant.restaurant_id }}">
+        <hr>
+        <div class="container mb-4">
+            <h4>Submit a Review</h4>
+            <div class="mb-3">
+                <textarea class="form-control" id="review_text" name="review_text" rows="3" placeholder="Loved the Food!" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rate Us!</label>
+                <input type="number" placeholder="4.7" class="form-control form-control-sm" id="rating" name="rating" min="0" max="5" step="0.5" required>
+            </div>
+            <button type="submit" class="btn btn-dark btn-lg">Submit Review</button>
+        </div>
+    </form>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+</body>
+</html>

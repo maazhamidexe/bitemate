@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayPal Payment</title>
+</head>
+<body>
+    <!-- Add PayPal payment form here -->
+    <form action="/process_paypal_payment" method="post">
+        <!-- Include necessary input fields for PayPal payment -->
+        <!-- For example, item details, total amount, user information, etc. -->
+        <input type="hidden" name="amount" value="{{ total_price }}">
+        <input type="hidden" name="description" value="Payment for your order">
+        <!-- Add more hidden input fields as needed -->
+
+        <!-- Add a submit button to initiate the PayPal payment -->
+        <button type="submit">Pay with PayPal</button>
+    </form>
+</body>
+</html>
+ 

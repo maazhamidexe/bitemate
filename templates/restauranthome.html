@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ restaurant.restaurant_name }} Home - BiteMate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Add custom styles here */
+    </style>
+</head>
+<body>
+
+    <!-- Custom Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">BiteMate</a>
+            <div class="d-flex">
+                <a href="/view_orders" class="btn btn-outline-light me-2">View Orders</a>
+                <a href="/view_analytics" class="btn btn-outline-light me-2">View Analytics</a>
+                <a href="/restaurant/logout" class="btn btn-outline-light me-2">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Restaurant Name and Details -->
+    <div class="container mt-4">
+        <h2 class="display-4">{{ restaurant.restaurant_name }}</h2>
+
+        <!-- Restaurant Details -->
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <p class="lead">{{ restaurant.description }}</p>
+                <p><strong>Location:</strong> {{ restaurant.location }}</p>
+                <!-- Add more restaurant details as needed -->
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-success">Total Rating</h3>
+                <p class="lead"><strong>Rating:</strong> {{ restaurant.total_rating }}/5</p>
+                <!-- Add more rating details as needed -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="container mb-4">
+        <h3>Menu</h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for item in menu_items %}
+            <div class="col">
+                <a href="#" class="text-decoration-none text-dark">
+                    <div class="card h-100" style="width: 18rem;" id="menuitems"> <!-- Specify custom width here -->
+                        <img src="{{item.item_image }}" class="card-img-top img-fluid mb-3" alt="{{ item.item_name }}" style="height: 150px; object-fit: cover;"> <!-- Adjust height as needed -->
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.item_name }}</h5>
+                            <p class="card-text">{{ item.description }}</p>
+                            <p class="card-text">Price: ${{ item.price }}</p>
+                            <p class="card-text">Available: 
+                                <label class="switch">
+                                    <input type="checkbox" {% if item.is_available %}checked{% endif %} onchange="toggleAvailability('{{ item.item_id }}')">
+
+                                    <span class="slider round"></span>
+                                </label>
+                            </p>
+                            <!-- Add remove from menu button here -->
+                            <form action="/remove_item" method="post">
+                                <!-- Hidden input field to store the item_id value -->
+                                <input type="hidden" name="item_id" value="{{ item.item_id }}">
+                                <!-- Button to submit the form -->
+                                <button type="submit" class="btn btn-outline-dark">Remove from Menu</button>
+                            </form>
+                            <br>
+                            <a href="{{ url_for('update_item', item_id=item.item_id) }}" class="btn btn-dark">Update Food Item</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Add a new food item button -->
+    <div class="container mb-4">
+        <a href="/add_item" class="btn btn-success">Add a New Food Item</a>
+    </div>
+    <hr>
+    <!-- User Reviews -->
+    <div class="container mb-4">
+        <h3>Customer Reviews</h3>
+        <div class="list-group">
+            {% for review in reviews %}
+            <div class="list-group-item">
+                <div class="d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='default_profile_picture.jpg') }}" alt="Profile Picture" class="rounded-circle me-3" style="width: 50px;">
+                    <div>
+                        <h5 class="mb-1">{{ review.user.username }}</h5>
+                        <p class="mb-1">"{{ review.review_text }}"</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-W7F8FExl3XLpO1zWPh9BdMuoPkfnzEnR8HW+v1T+ddvJQ23gx9xL/h3y+qhW3Py3" crossorigin="anonymous"></script>
+    <!-- JavaScript function to toggle item availability -->
+<script>
+    function toggleAvailability(itemId) {
+        // Send an AJAX request to update item availability in the database
+        fetch(`/toggle_availability/${itemId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ item_id: itemId })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Item availability updated successfully
+                console.log('Item availability toggled successfully');
+                // Optionally, update the UI to reflect the new availability
+            } else {
+                // Error occurred while updating item availability
+                console.error('Failed to toggle item availability');
+            }
+        })
+        .catch(error => {
+            // Handle any network or other errors
+            console.error('Error occurred:', error);
+        });
+    }
+</script>
+
+    
+</body>
+</html>

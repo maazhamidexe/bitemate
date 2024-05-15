@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Head section -->
+</head>
+<body>
+    <!-- Navbar -->
+    {% include 'navbar.html' %}
+    <br>
+
+    <!-- Cart Items List -->
+    <ul class="list-group text-center mx-auto" style="width: 60%;">
+        <!-- Loop through cart items -->
+        {% for cart_item in cart_items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <!-- Item details -->
+            <div class="d-flex align-items-center">
+                <img src="{{cart_item.item_image}}" alt="Item" class="img-thumbnail me-3" style="width: 50px;">
+                <span class="fw-bold">{{ cart_item.item_name }}</span>
+            </div>
+            <!-- Quantity input -->
+            <div class="input-group" style="width: 100px;">
+                <input type="number" class="form-control" value="{{ cart_item.quantity }}" min="1">
+            </div>
+            <!-- Remove button -->
+            <form action="{{ url_for('delete_from_cart', item_id=cart_item.item_id ) }}" method="post">
+                <button type="submit" class="btn btn-dark">Remove</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <hr>
+
+    <!-- Place order Button with Redirect -->
+    <div class="container" style="margin-left: 19.1%;">
+        <form id="place-order-form" action="/place_order" method="POST">
+            <!-- Add any necessary hidden input fields here -->
+            <button type="submit" class="btn btn-lg checkout-btn btn-dark">Place Order</button>
+        </form>
+    </div>
+    
+
+    <!-- Add Items Button with Redirect -->
+    <div class="container mt-2" style="margin-left: 19.1%">
+        <a href="/restaurants" class="btn btn-lg add-items-btn btn-dark">Add More Items</a>
+    </div>
+    <hr>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+    <!-- Script for dynamic effects -->
+    <script>
+        // Smooth scroll effect for anchor links
+        // document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        //     anchor.addEventListener('click', function (e) {
+        //         e.preventDefault();
+
+        //         document.querySelector(this.getAttribute('href')).scrollIntoView({
+        //             behavior: 'smooth'
+        //         });
+        //     });
+        // });
+
+        
+        // Add a click event listener to the link
+        // document.querySelector('.checkout-btn').addEventListener('click', function(event) {
+        //     // Prevent the default action of the link
+        //     event.preventDefault();
+            
+        //     // Submit the form when the link is clicked
+        //     document.getElementById('place-order-form').submit();
+        //});
+    </script>
+</body>
+</html>
